@@ -3,10 +3,11 @@ import Button from "./components/Button";
 import ButtonWithoutEl from "./components/ButtonWithoutEl";
 import Container from "./components/Container";
 import Input from "./components/Input";
-import Form from "./components/Form";
+import Form, { FormHandle } from "./components/Form";
 
 function App() {
   const inputRef = useRef<HTMLInputElement>(null);
+  const customFormRef = useRef<FormHandle>(null);
 
   function handleOnSave(data: unknown) {
     // const extractedData = data as {
@@ -20,6 +21,7 @@ function App() {
     }
 
     console.log(data);
+    customFormRef.current?.clear();
   }
   return (
     <main>
@@ -30,7 +32,7 @@ function App() {
         Blah
       </Container>
 
-      <Form onSave={handleOnSave}>
+      <Form onSave={handleOnSave} ref={customFormRef}>
         <Input label="This is text" id="SomeId" name="name" type="text" ref={inputRef} />
         <Input label="This is number" id="anotherId" name="age" type="number" />
         <Button el="button">Save</Button>
