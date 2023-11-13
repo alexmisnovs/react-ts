@@ -1,9 +1,9 @@
 import { useRef } from "react";
-import Button from "./components/Button";
-import ButtonWithoutEl from "./components/ButtonWithoutEl";
-import Container from "./components/Container";
-import Input from "./components/Input";
-import Form, { FormHandle } from "./components/Form";
+import Button from "./components/UI/Button";
+import ButtonWithoutEl from "./components/UI/ButtonWithoutEl";
+import Container from "./components/UI/Container";
+import Input from "./components/UI/Input";
+import Form, { FormHandle } from "./components/UI/Form";
 
 function App() {
   const inputRef = useRef<HTMLInputElement>(null);
