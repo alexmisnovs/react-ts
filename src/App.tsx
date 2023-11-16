@@ -1,9 +1,10 @@
 import { useRef } from "react";
 import Button from "./components/UI/Button";
-import ButtonWithoutEl from "./components/UI/ButtonWithoutEl";
-import Container from "./components/UI/Container";
+
 import Input from "./components/UI/Input";
 import Form, { FormHandle } from "./components/UI/Form";
+import TimersContextProvider from "./store/timers-store";
+import Header from "./components/Header";
 
 function App() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -24,23 +25,17 @@ function App() {
     customFormRef.current?.clear();
   }
   return (
-    <main>
-      <Container as={Button} el="button" onClick={() => {}}>
-        Blah
-      </Container>
-      <Container as={ButtonWithoutEl} href="hey" onClick={() => {}}>
-        Blah
-      </Container>
+    <TimersContextProvider>
+      <main>
+        <Header />
 
-      <Form onSave={handleOnSave} ref={customFormRef}>
-        <Input label="This is text" id="SomeId" name="name" type="text" ref={inputRef} />
-        <Input label="This is number" id="anotherId" name="age" type="number" />
-        <Button el="button">Save</Button>
-      </Form>
-
-      <ButtonWithoutEl disabled>Hello</ButtonWithoutEl>
-      <ButtonWithoutEl href="/hello">Link</ButtonWithoutEl>
-    </main>
+        <Form onSave={handleOnSave} ref={customFormRef}>
+          <Input label="This is text" id="SomeId" name="name" type="text" ref={inputRef} />
+          <Input label="This is number" id="anotherId" name="age" type="number" />
+          <Button el="button">Save</Button>
+        </Form>
+      </main>
+    </TimersContextProvider>
   );
 }
 
