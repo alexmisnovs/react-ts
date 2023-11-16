@@ -1,6 +1,6 @@
-import { type ReactNode, createContext, useContext } from "react";
+import { type ReactNode, createContext, useContext, useReducer } from "react";
 
-type Timer = {
+export type Timer = {
   name: string;
   duration: number;
 };
@@ -10,15 +10,18 @@ type TimersState = {
   timers: Timer[];
 };
 
+const initialState: TimersState = {
+  isRunning: true,
+  timers: [],
+};
+
 type TimersContextValue = TimersState & {
   addTimer: (timerData: Timer) => void;
   startTimers: () => void;
   stopTimers: () => void;
 };
 
-const initialValue = null;
-
-const TimersContext = createContext<TimersContextValue | null>(initialValue);
+const TimersContext = createContext<TimersContextValue | null>(null);
 export function useTimersContext() {
   const timersCtx = useContext(TimersContext);
 
@@ -33,15 +36,64 @@ type TimerContextProviderProps = {
   children: ReactNode;
 };
 
+type StartTimersAction = {
+  type: "START_TIMERS";
+};
+type StopTimersAction = {
+  type: "STOP_TIMERS";
+};
+type AddTimerAction = {
+  type: "ADD_TIMER";
+  payload: Timer;
+};
+type Action = StartTimersAction | StopTimersAction | AddTimerAction;
+
+function timersReducer(state: TimersState, action: Action): TimersState {
+  if (action.type === "START_TIMERS") {
+    //do this
+    return {
+      ...state,
+      isRunning: true,
+    };
+  }
+  if (action.type === "STOP_TIMERS") {
+    //do this
+    return {
+      ...state,
+      isRunning: false,
+    };
+  }
+  if (action.type === "ADD_TIMER") {
+    //do this
+    return {
+      ...state,
+      timers: [
+        ...state.timers,
+        {
+          name: action.payload.name,
+          duration: action.payload.duration,
+        },
+      ],
+    };
+  }
+  return state;
+}
+
 export default function TimersContextProvider({ children }: TimerContextProviderProps) {
+  const [timersState, dispatch] = useReducer(timersReducer, initialState);
+
   const ctx: TimersContextValue = {
-    timers: [],
-    isRunning: false,
+    timers: timersState.timers,
+    isRunning: timersState.isRunning,
     addTimer(timerData) {
-      // logic
+      dispatch({ type: "ADD_TIMER", payload: timerData });
     },
-    startTimers() {},
-    stopTimers() {},
+    startTimers() {
+      dispatch({ type: "START_TIMERS" });
+    },
+    stopTimers() {
+      dispatch({ type: "STOP_TIMERS" });
+    },
   };
 
   return <TimersContext.Provider value={ctx}>{children}</TimersContext.Provider>;
