@@ -6,6 +6,7 @@ import AddTimer from "./components/AddTimer";
 import { get } from "./utils/http";
 import { ReactNode, useEffect, useState } from "react";
 import BlogPosts, { type BlogPost } from "./components/BlogPosts";
+import ErrorMessage from "./components/ErrorMessage";
 
 type RawDataBlogPost = {
   id: number;
@@ -16,20 +17,33 @@ type RawDataBlogPost = {
 
 function App() {
   const [fetchedPosts, setFetchedPosts] = useState<BlogPost[] | undefined>();
-
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
   useEffect(() => {
     async function fetchPosts() {
-      const data = (await get("https://jsonplaceholder.typicode.com/posts")) as RawDataBlogPost[];
+      setIsFetching(true);
+      try {
+        //TODO convert to zod as an example
 
-      const blogPosts: BlogPost[] = data.map(rawPost => {
-        return {
-          id: rawPost.id,
-          title: rawPost.title,
-          text: rawPost.body,
-        };
-      });
+        const data = (await get("https://jsonplaceholdex.typicode.com/posts")) as RawDataBlogPost[];
 
-      setFetchedPosts(blogPosts);
+        if (data.length > 0) {
+          const blogPosts: BlogPost[] = data.map(rawPost => {
+            return {
+              id: rawPost.id,
+              title: rawPost.title,
+              text: rawPost.body,
+            };
+          });
+          setFetchedPosts(blogPosts);
+        }
+
+        setIsFetching(false);
+      } catch (error) {
+        if (error instanceof Error) {
+          setErrorMessage(error.message);
+        }
+      }
     }
 
     fetchPosts();
@@ -39,6 +53,13 @@ function App() {
 
   if (fetchedPosts) {
     content = <BlogPosts posts={fetchedPosts} />;
+  }
+
+  if (isFetching) {
+    content = <p>Fetching posts..</p>;
+  }
+  if (errorMessage) {
+    content = <ErrorMessage text={errorMessage} />;
   }
 
   return (
